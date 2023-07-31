@@ -35,7 +35,7 @@ export class CountryPageComponent implements OnInit {
           return this.router.navigateByUrl('');  // si no existe sale de la ruta o lo redirige  a otra
         }
 
-//        this.country = country;
+        this.country = country;
 
         return;
       }

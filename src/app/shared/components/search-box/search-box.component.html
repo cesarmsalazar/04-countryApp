@@ -1,7 +1,18 @@
-<input 
-  type="text" 
-  [placeholder]="placeholder" 
+<!-- <input    // tambien funciona con el enter, pero con la sgte linea se optimizó con Debounce
+  type="text"
+  [placeholder]="placeholder"
   class="form-control"
   (keyup.enter)="emitValue( txtInput.value )"
+  #txtInput
+>
+(keyup)="onKeyPress(txtInput.value)" // se dispara con cada tecla pulsada y envia el texto
+-->
+
+<input
+  type="text"
+  [placeholder]="placeholder"
+  [value]="initialValue"
+  class="form-control"
+  (keyup)="onKeyPress(txtInput.value)"
   #txtInput
 >

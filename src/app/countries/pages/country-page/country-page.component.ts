@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CountriesService } from '../../services/countries.service';
+import { switchMap } from 'rxjs';
+import { Country } from '../../interfaces/country.interface';
 
 @Component({
   selector: 'country-country-page',
@@ -10,25 +12,35 @@ import { CountriesService } from '../../services/countries.service';
 })
 export class CountryPageComponent implements OnInit {
 
-  
-  constructor( 
+  public country?: Country;
+
+  constructor(
     private activatedRoute: ActivatedRoute,
-    private countriesService: CountriesService 
+    private countriesService: CountriesService,
+    private router: Router
   ){
-    
-    
+
+
   }
-  
+
   ngOnInit(): void {
     this.activatedRoute.params
-      .subscribe( ({id})  => {   // devuelve los parametros de la url 
-          //console.log({params:id})
-          this.countriesService.searchCountryByAlphaCode( id )
-          .subscribe( country => {
-            console.log( country );
-          } )
+      .pipe(
+        switchMap( ({id}) => this.countriesService.searchCountryByAlphaCode( id )  ),
+      )
+      .subscribe( country => {   // devuelve los parametros de la url
+        console.log( country ); // ya no es un arreglo sino solo un elemento o null
+
+        if ( !country ) {
+          return this.router.navigateByUrl('');  // si no existe sale de la ruta o lo redirige  a otra
         }
-      )    
+
+//        this.country = country;
+
+        return;
+      }
+    )
   }
+
 
 }

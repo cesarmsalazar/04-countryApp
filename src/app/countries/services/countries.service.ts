@@ -18,6 +18,17 @@ export class CountriesService {
 
   constructor(private http: HttpClient) {
     console.log('Countries Service Init');
+    this.loadFromLocalStorage()
+  }
+
+  private saveToLocalStorage() {
+    localStorage.setItem('cacheStore', JSON.stringify( this.cacheStore ))  // localStorage solo acepta cadenas por eso usamos stringify
+  }
+
+  private loadFromLocalStorage() {
+    if ( !localStorage.getItem('cacheStore') ) return;  // si no existe cacheStore sale y no hace nada
+
+    this.cacheStore = JSON.parse( localStorage.getItem('cacheStore')! )
   }
 
   searchCountryByAlphaCode( code: string ): Observable<Country | null> {
@@ -36,7 +47,8 @@ export class CountriesService {
       catchError( () => of([]) ),  // atrapando error y devuelve arreglo vacio
       // delay( 2000 ),  pausa de dos segundos solo para el ejemplo
     ).pipe (
-      tap( countries => this.cacheStore.byCapital = {term: term, countries: countries} )  // devuelve lo que hay en cacheStore
+      tap( countries => this.cacheStore.byCapital = {term: term, countries: countries} ),  // devuelve lo que hay en cacheStore
+      tap( () => this.saveToLocalStorage() )
     );
   }
 
@@ -45,7 +57,8 @@ export class CountriesService {
     .pipe(
       catchError( () => of([]) ),  // atrapando error y devuelve arreglo vacio
     ).pipe(
-      tap( countries => this.cacheStore.byCountries = {term: term, countries: countries} )  // devuelve lo que hay en cacheStore
+      tap( countries => this.cacheStore.byCountries = {term: term, countries: countries} ),  // devuelve lo que hay en cacheStore
+      tap( () => this.saveToLocalStorage() )
     );
   }
 
@@ -54,7 +67,8 @@ export class CountriesService {
     .pipe(
       catchError( () => of([]) )  // atrapando error y devuelve arreglo vacio
     ).pipe(
-      tap( countries => this.cacheStore.byRegion = {region: region, countries: countries} )  // devuelve lo que hay en cacheStore
+      tap( countries => this.cacheStore.byRegion = {region: region, countries: countries} ),  // devuelve lo que hay en cacheStore
+      tap( () => this.saveToLocalStorage() )
     );
   }
 
